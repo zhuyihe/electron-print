@@ -1,15 +1,16 @@
 const path = require('path')
 const https = require('https')
-const fs = require('fs')
+// const fs = require('fs')
 const cp = require('child_process')
 const staticPath = './public'
+// const printer = require('pdf-to-printer')
 // let pdfPath = path.join(__static, 'pdf/' + url.slice(url.lastIndexOf('/') + 1))
 // const isPrdEnv = process.env.NODE_ENV === 'production'
 const executePrint = (pdfPath, deviceName = 'TOSHIBA Universal PS3') => {
-    console.log(path.resolve(__static, ''), 'aaa')
+    console.log(path.resolve(__static, ''), deviceName)
     return new Promise((resolve, reject) => {
         cp.exec(
-            `SumatraPDF.exe -print-to "${deviceName}"  "${pdfPath}"`,
+            `SumatraPDF.exe -print-to "${deviceName}"  "${pdfPath}"  -print-settings "paper=A4,landscape,fit" `,
             {
                 windowsHide: true,
                 cwd: path.resolve(__static, '')

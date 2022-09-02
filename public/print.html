@@ -17,25 +17,11 @@
         @page {
             margin: 0px;
         }
-
-        #bd {
-
-            /* font-weight: bold; */
-        }
-
-        .aa {
-            font-weight: bold;
-        }
-
-        .div1 {
-            overflow: hidden;
-        }
     </style>
 </head>
 
 <body id="bd">
-    ccc
-    <div class="aa">wqdqwdqwdqwdqw</div>
+
 </body>
 
 <script>
@@ -45,10 +31,6 @@
         // console.log(info, 'ccc')
         // console.log(event, info)
         document.write(info.content)
-        // document.getElementById('bd').innerHTML = 
-        // setTimeout(() => {
-        //     document.body.style['font-family'] = 'STSong'
-        // }, 1000);
         if (info.parent == 'win') {
             ipcRenderer.send('webview-print-do')
         } else {

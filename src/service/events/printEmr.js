@@ -2,8 +2,13 @@ const path = require('path')
 const { v4: uuidv4 } = require('uuid')
 const { resStatus } = require('../events/resStatus')
 const printEmr = (req, res) => {
+    console.log(global.$notification)
+    global.$notification.create('打印消息', '病历打印中...')
     let { FileStream, showHtml } = req.body
-    FileStream = FileStream.replace(/\SimSun/g, 'STSong')
+    const fontWeight =
+        'font-weight: bold;text-shadow:0.15pt 0px 0px black, 0.25pt 0px 0px black, 0.35pt 0px 0px black, -0.25pt 0px 0px black, 0px 0.25pt 0px black, 0px -0.25pt 0px black;'
+    // FileStream = FileStream.replace(/\SimSun/g, 'FangSong')
+    FileStream = FileStream.replaceAll('font-weight: bold;', fontWeight)
     let emrConfig = {
         ...req.body,
         FileStream
@@ -19,7 +24,7 @@ const printEmr = (req, res) => {
 const loadHtml = (emrConfig, res) => {
     const staticPath = path.join(__static, 'print.html')
     const option = {
-        // show: false,
+        show: true,
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -34,7 +39,6 @@ const loadHtml = (emrConfig, res) => {
     const win = global.$windowService.createWinItem(id, option, staticPath)
     win.loadURL(staticPath)
     printSilent(win, emrConfig, res, id)
-    console.log(global, 'global')
 }
 const printSilent = (win, emrConfig, res, id) => {
     const { PrintSettings } = emrConfig
@@ -52,7 +56,8 @@ const printSilent = (win, emrConfig, res, id) => {
             break
     }
     win.webContents.once('dom-ready', () => {
-        if (!global.isDevMode) {
+        if (global.isDevMode) {
+            win.show()
             win.webContents.openDevTools(true)
         }
 
@@ -83,7 +88,8 @@ const printSilent = (win, emrConfig, res, id) => {
             }
             printerConfig.msg = msg
             global.logs.info(`print ${data}==>${JSON.stringify(printerConfig)}`)
-            global.$windowService.closeWindow(id)
+            global.$notification.create('打印消息', msg)
+            // global.$windowService.closeWindow(id)
         })
     })
 }

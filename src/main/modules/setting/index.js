@@ -6,8 +6,9 @@ const setting = app => {
         //  开机启动
         openAtLogin: true,
         //  开机启动时为隐藏启动
-        openAsHidden: false
+        openAsHidden: true
     })
+    app.setAppUserModelId(app.name)
     if (!global.isDevMode) Menu.setApplicationMenu(null)
 }
 

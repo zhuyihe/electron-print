@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const { body, validationResult } = require('express-validator')
-const boom = require('boom')
+// const boom = require('boom')
 const path = require('path')
 const { executePrint } = require('../events/printpdf')
 const printEmr = require('../events/printEmr')
@@ -38,9 +38,9 @@ const printPdf = (req, res, next) => {
     if (!err.isEmpty()) {
         const { msg } = err.errors[0]
         // 抛出错误，交给我们自定义的统一异常处理程序进行错误返回
-        next(boom.badRequest(msg))
+        // next(boom.badRequest(msg))
     } else {
-        let { type, url } = req.body
+        let { type, url, deviceName } = req.body
         console.log(global.$windows)
         // global.$electronStore.set('pdf', {
         //     type,
@@ -51,7 +51,7 @@ const printPdf = (req, res, next) => {
         //     url
         // })
         let pdfPath = path.join(__static, 'pdf/' + url.slice(url.lastIndexOf('/') + 1))
-        executePrint(pdfPath)
+        executePrint(pdfPath, deviceName)
         // printer(pdfPath)
         //     .then(res => {
         //         console.log(res)

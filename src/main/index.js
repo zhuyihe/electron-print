@@ -67,7 +67,7 @@ export default function launchApp() {
         }
     })
     // app.once('ready-to-show', () => {
-    //     win.show()
+    //     win.hide()
     // })
     //限制最大窗口数量 单例模式
     app.on('second-instance', (event, commandLine, workingDirectory) => {

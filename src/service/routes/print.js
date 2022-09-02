@@ -8,7 +8,7 @@ const vaildator = {
         body('FileStream').notEmpty().withMessage('内容不能为空'),
         body('FileStream').isString().withMessage('内容必须为字符串')
     ],
-    printPdf: [body('FileFormat').notEmpty().withMessage('类型不能为空'), body('url').notEmpty().withMessage('pdf地址不能为空')]
+    printPdf: [body('url').notEmpty().withMessage('pdf地址不能为空')]
 }
 
 // console.log(vaildator, 'qqq')

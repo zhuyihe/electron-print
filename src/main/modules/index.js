@@ -11,6 +11,7 @@ import events from './events'
 import windowModule from './windowServics'
 import trayService from './tray'
 import log from './logger'
+import notification from './notification'
 export default {
     async init(app) {
         log()
@@ -20,5 +21,6 @@ export default {
         setting(app)
         trayService()
         events()
+        notification()
     }
 }
