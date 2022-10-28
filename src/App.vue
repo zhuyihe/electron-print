@@ -1,17 +1,5 @@
 <template>
     <div id="app">
-        <!-- <printDialog :dialog-visible="dialogVisible" @cancel="handlePrintDialogCancel" /> -->
-        <!-- <PinterWeb ref="print"></PinterWeb>
-        <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="date" label="日期" width="180" column-key="date"> </el-table-column>
-            <el-table-column prop="name" label="姓名" width="180"> </el-table-column>
-            <el-table-column prop="address" label="地址"> </el-table-column>
-            <el-table-column label="操作">
-                <template slot-scope="scope">
-                    <el-button type="primary" @click="doPrint(scope.row)">打印</el-button>
-                </template>
-            </el-table-column>
-        </el-table> -->
         <router-view />
     </div>
 </template>
@@ -47,6 +35,9 @@ export default {
 </script>
 
 <style>
+body {
+    margin: 0;
+}
 #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     /* -webkit-font-smoothing: antialiased;

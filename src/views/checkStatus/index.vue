@@ -1,16 +1,5 @@
 <template>
-    <div class="connectToweb">
-        <!-- <div class="tip">
-            <div>{{ ioStatus.msg }}</div>
-            <div>
-                <svg class="icon" aria-hidden="true" v-if="ioStatus.type == 'disconnect'">
-                    <use xlink:href="#icon-shibai" />
-                </svg>
-                <svg class="icon" aria-hidden="true" v-else>
-                    <use xlink:href="#icon-chenggong" />
-                </svg>
-            </div>
-        </div> -->
+    <div class="connectToweb" v-loading="isUpdatte" :element-loading-text="loadingText" element-loading-spinner="el-icon-loading">
         <div class="tip">
             <div>{{ printerStutas.msg }}</div>
             <div>
@@ -22,12 +11,40 @@
                 </svg>
             </div>
         </div>
+        <el-dialog
+            title="更新提示"
+            :visible.sync="dialogVisible"
+            width="500px"
+            :show-close="false"
+            :close-on-click-modal="false"
+            custom-class="updateDialog"
+        >
+            <div v-if="!isUpdatte">
+                <span><i class="el-icon-warning warning"></i>检测到新版本，是否更新？</span>
+            </div>
+            <!-- <div v-else>
+                <el-progress
+                    type="line"
+                    :percentage="percent"
+                    :text-inside="true"
+                    :stroke-width="25"
+                    :show-text="true"
+                    :color="colors"
+                ></el-progress>
+                <p>程序正在下载，请勿退出...</p>
+            </div> -->
+            <span slot="footer" class="dialog-footer" v-if="!isUpdatte">
+                <el-button @click="dialogVisible = false">稍后</el-button>
+                <el-button type="primary" @click="confirmUpdate">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
 // import checkIoStutas from '@/mixins/checkIoStutas'
+import { ipcRenderer } from 'electron'
+
 export default {
     name: 'connectToweb',
     data() {
@@ -40,11 +57,35 @@ export default {
                 msg: '打印服务异常请重启电脑',
                 type: false
             },
-            printList: []
+            printList: [],
+            isUpdatte: false,
+            loadingText: '加载中...',
+            percent: 0,
+            dialogVisible: false,
+            colors: [
+                { color: '#f56c6c', percentage: 20 },
+                { color: '#e6a23c', percentage: 40 },
+                { color: '#6f7ad3', percentage: 60 },
+                { color: '#1989fa', percentage: 80 },
+                { color: '#5cb87a', percentage: 100 }
+            ]
             // tip: '请与客户端链接'
         }
     },
+    computed: {
+        customStatus() {
+            console.log(this.percent)
+            if (this.percent == 100) {
+                return 'success'
+            } else {
+                return 'exception'
+            }
+        }
+    },
     // mixins: [checkIoStutas],
+    created() {
+        this.update()
+    },
     mounted() {
         this.init()
     },
@@ -53,6 +94,63 @@ export default {
             // await this.linstenerIo()
             this.linstenerPrinter()
             this.togoPrint()
+            this.linstenerUpdate()
+        },
+        update() {
+            ipcRenderer.send('check-update')
+        },
+        confirmUpdate() {
+            this.isUpdatte = true
+            this.dialogVisible = false
+            ipcRenderer.send('confirm-downloadUpdate')
+        },
+        linstenerUpdate() {
+            let _this = this
+            //接收主进程版本更新消息
+            ipcRenderer.on('UpdateMsg', (event, arg) => {
+                console.log(arg, 'arg')
+                let percentage = 0
+                switch (arg.state) {
+                    case 1:
+                        _this.dialogVisible = true
+                        _this.$windows.show()
+                        // ipcRenderer.send('confirm-downloadUpdate')
+                        break
+                    case 3:
+                        percentage = Math.round(parseFloat(arg.msg.percent))
+                        _this.loadingText = `拼命下载中${percentage}%,请勿退出！`
+                        break
+                    case 4:
+                        _this.progressStaus = 'success'
+                        _this.loadingText = '下载完成,开始安装...'
+                        ipcRenderer.send('confirm-update')
+                        break
+                }
+                // for (var i = 0; i < arg.length; i++) {
+                // console.log(arg)
+                // if ('update-available' == arg.cmd) {
+                //     //显示升级对话框
+                //     _this.dialogVisible = true
+                // } else if ('download-progress' == arg.cmd) {
+                //     //更新升级进度
+                //     /**
+                //          *
+                //          * message{bytesPerSecond: 47673
+                //          delta: 48960
+                //         percent: 0.11438799862426002
+                //         total: 42801693
+                //         transferred: 48960
+                //         }
+                //         */
+                //     console.log(arg.message.percent)
+                //     let percent = Math.round(parseFloat(arg.message.percent))
+                //     _this.percentage = percent
+                // } else if ('error' == arg.cmd) {
+                //     _this.dialogVisible = false
+                //     _this.$message('更新失败')
+                // }
+                // }
+            })
         },
         // linstenerIo() {
         //     ipcRenderer.send('checkIoStutas')
@@ -70,7 +168,6 @@ export default {
             // ipcRenderer.send('getPrinterList')
             // ipcRenderer.once('getPrinterList', (event, data) => {
             const data = this.$electronStore.get('printerList')
-            console.log(data, 'wqdqwdqw')
             // 过滤可用打印机
             this.printList = data.filter(element => element.status === 0)
             console.log(this.printList, 'this.printList')
@@ -100,6 +197,7 @@ export default {
                 if (data) this.checkStatus(data)
             })
         },
+
         checkStatus(data) {
             if (this.printerStutas.type) {
                 this.$windows.show()
@@ -120,6 +218,8 @@ export default {
 
 <style lang="scss">
 .connectToweb {
+    width: 100%;
+    height: calc(100vh - 48px);
     .tip {
         display: flex;
         justify-content: center;
@@ -132,6 +232,13 @@ export default {
         }
         line-height: 16px;
         margin-top: 30px;
+    }
+}
+.updateDialog {
+    .warning {
+        color: #e6a23c;
+        font-size: 20px;
+        margin-right: 10px;
     }
 }
 </style>

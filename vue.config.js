@@ -34,6 +34,12 @@ module.exports = {
                 directories: {
                     output: './dist' //输出文件路径
                 },
+                publish: [
+                    {
+                        provider: 'generic',
+                        url: 'https://10.102.11.54/GlPrinter'
+                    }
+                ],
                 compression: 'store',
                 win: {
                     // asar: false,

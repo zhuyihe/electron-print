@@ -22,6 +22,26 @@ const ipcRenderers = {
         remove() {
             ipcRenderer.removeAllListeners('printPdf')
         }
+    },
+    update: {
+        async get(type, callback) {
+            await ipcRenderer[type]('update', (event, arg) => {
+                return callback(event, arg)
+            })
+        },
+        remove() {
+            ipcRenderer.removeAllListeners('update')
+        }
+    },
+    checkForUpdate: {
+        async get(type, callback) {
+            await ipcRenderer[type]('checkForUpdate', (event, arg) => {
+                return callback(event, arg)
+            })
+        },
+        remove() {
+            ipcRenderer.removeAllListeners('checkForUpdate')
+        }
     }
 }
 

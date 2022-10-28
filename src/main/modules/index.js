@@ -12,6 +12,7 @@ import windowModule from './windowServics'
 import trayService from './tray'
 import log from './logger'
 import notification from './notification'
+import { updateHandle } from './update'
 export default {
     async init(app) {
         log()
@@ -22,5 +23,6 @@ export default {
         trayService()
         events()
         notification()
+        updateHandle()
     }
 }

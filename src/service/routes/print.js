@@ -11,8 +11,6 @@ const vaildator = {
     printPdf: [body('url').notEmpty().withMessage('pdf地址不能为空')]
 }
 
-// console.log(vaildator, 'qqq')
-// 获取EMR文档
 router.post('/emrContent', vaildator.emrContent, printModels.getEmrContent)
 router.post('/printPdf', vaildator.printPdf, printModels.printPdf)
 module.exports = router

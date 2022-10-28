@@ -24,7 +24,7 @@ const printEmr = (req, res) => {
 const loadHtml = (emrConfig, res) => {
     const staticPath = path.join(__static, 'print.html')
     const option = {
-        show: true,
+        show: global.isDevMode ? true : false,
         webPreferences: {
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -71,7 +71,7 @@ const printSilent = (win, emrConfig, res, id) => {
         let printerConfig = {
             silent: true,
             printBackground: false,
-            deviceName: PrintName || 'Microsoft Print to PDF', // 打印机对象的name
+            deviceName: PrintName || 'Microsoft Print to PDF',
             copies: parseInt(PrintNum) || 1,
             duplexMode
         }
@@ -89,7 +89,7 @@ const printSilent = (win, emrConfig, res, id) => {
             printerConfig.msg = msg
             global.logs.info(`print ${data}==>${JSON.stringify(printerConfig)}`)
             global.$notification.create('打印消息', msg)
-            // global.$windowService.closeWindow(id)
+            if (global.isDevMode) global.$windowService.closeWindow(id)
         })
     })
 }

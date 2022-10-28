@@ -33,23 +33,3 @@ const log = () => {
 }
 global.logs = log()
 export default log
-// export default {
-//     info(param) {
-//         logger.info(param)
-//     },
-//     warn(param) {
-//         logger.warn(param)
-//     },
-//     error(param) {
-//         logger.error(param)
-//     },
-//     debug(param) {
-//         logger.debug(param)
-//     },
-//     verbose(param) {
-//         logger.verbose(param)
-//     },
-//     silly(param) {
-//         logger.silly(param)
-//     }
-// }

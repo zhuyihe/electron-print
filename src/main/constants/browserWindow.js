@@ -1,8 +1,8 @@
 const path = require('path')
 
 const commonOptions = {
-    width: 1200,
-    height: 800,
+    width: 900,
+    height: 500,
     id: 1,
     // autoHideMenuBar: true,
     show: false,

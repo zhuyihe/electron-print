@@ -29,7 +29,7 @@ export default function launchApp() {
     //         }
     //     }
     // ])
-    setDefaultProtocol()
+    app.commandLine.appendSwitch('ignore-certificate-errors')
     /**
      * 打开主界面
      */
@@ -45,7 +45,6 @@ export default function launchApp() {
         })
         win.on('show', e => {
             e.preventDefault()
-            console.log('show', 'qqq')
             win.setAlwaysOnTop(true)
 
             setTimeout(() => {
@@ -58,6 +57,7 @@ export default function launchApp() {
         } else {
             win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
         }
+        win.webContents.openDevTools()
     }
     app.on('window-all-closed', e => {
         if (global.forceQuit) {
@@ -98,6 +98,7 @@ export default function launchApp() {
         // })
         createWindow()
         modules.init(app)
+        setDefaultProtocol()
         // console.log(global, 'wqdqwdqw')
     })
     // modules.init(app);

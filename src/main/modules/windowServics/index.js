@@ -24,9 +24,9 @@ const WindowService = () => {
             require('@electron/remote/main').enable(mainWindow.webContents)
             require('@electron/remote/main').initialize()
             global.$windows = mainWindow
-            if (global.isDevMode) {
-                mainWindow.webContents.openDevTools()
-            }
+            // if (global.isDevMode) {
+            mainWindow.webContents.openDevTools()
+            // }
             this.mainWindow = mainWindow
             this.mainWindow.setIcon(global.appLogoPath)
             return this.mainWindow

@@ -5,10 +5,10 @@ const notification = () => {
         notice: null,
         create(title = '标题', body = '正文文本，显示在标题下方') {
             const isSupported = Notification.isSupported()
+            let notice = null
             if (this.notice) {
                 this.close()
             }
-            let notice = null
             if (isSupported) {
                 const options = {
                     title,
