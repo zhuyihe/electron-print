@@ -20,7 +20,14 @@
             custom-class="updateDialog"
         >
             <div v-if="!isUpdatte">
-                <span><i class="el-icon-warning warning"></i>检测到新版本，是否更新？</span>
+                <span style="font-weight: bold" class="spanicon"><i class="el-icon-warning warning"></i>检测到新版本，是否更新？</span>
+                <el-scrollbar style="height: 100%">
+                    <div class="releaseNotes" v-if="releaseNotes.length">
+                        <div v-for="(item, key) in releaseNotes" :key="key" class="releaseNotesItem">
+                            <span v-if="item">{{ key + 1 }}、{{ item }}</span>
+                        </div>
+                    </div>
+                </el-scrollbar>
             </div>
             <!-- <div v-else>
                 <el-progress
@@ -68,7 +75,8 @@ export default {
                 { color: '#6f7ad3', percentage: 60 },
                 { color: '#1989fa', percentage: 80 },
                 { color: '#5cb87a', percentage: 100 }
-            ]
+            ],
+            releaseNotes: []
             // tip: '请与客户端链接'
         }
     },
@@ -109,15 +117,17 @@ export default {
             //接收主进程版本更新消息
             ipcRenderer.on('UpdateMsg', (event, arg) => {
                 console.log(arg, 'arg')
+
                 let percentage = 0
                 switch (arg.state) {
                     case 1:
+                        _this.releaseNotes = arg.msg ? arg.msg.split('\r\n') : []
                         _this.dialogVisible = true
                         _this.$windows.show()
                         // ipcRenderer.send('confirm-downloadUpdate')
                         break
                     case 3:
-                        percentage = Math.round(parseFloat(arg.msg.percent))
+                        percentage = parseInt(arg.msg.percent)
                         _this.loadingText = `拼命下载中${percentage}%,请勿退出！`
                         break
                     case 4:
@@ -239,6 +249,20 @@ export default {
         color: #e6a23c;
         font-size: 20px;
         margin-right: 10px;
+    }
+}
+.spanicon {
+    font-size: 18px;
+}
+.releaseNotes {
+    max-height: 150px;
+    margin-top: 10px;
+    // overflow: auto;
+    .releaseNotesItem {
+        // line-height: 24px;
+        padding-left: 10px;
+        margin: 10px;
+        font-size: 16px;
     }
 }
 </style>

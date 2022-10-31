@@ -40,6 +40,9 @@ module.exports = {
                         url: 'https://10.102.11.54/GlPrinter'
                     }
                 ],
+                releaseInfo: {
+                    releaseNotesFile: 'release-1.0.1.md'
+                },
                 compression: 'store',
                 win: {
                     // asar: false,

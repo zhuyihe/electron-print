@@ -28,7 +28,7 @@
     const { ipcRenderer } = require('electron')
     ipcRenderer.on('webview-print-render', (event, info) => {
         // 执行渲染
-        // console.log(info, 'ccc')
+        console.log(info, 'ccc')
         // console.log(event, info)
         document.write(info.content)
         if (info.parent == 'win') {

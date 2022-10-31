@@ -1,6 +1,13 @@
 import { app, Menu, Tray } from 'electron'
+import { updateHandle } from '../update'
 let tray = null
 const menus = [
+    {
+        click() {
+            taryCheckUpdates()
+        },
+        label: '检测更新'
+    },
     {
         click() {
             global.forceQuit = true
@@ -18,5 +25,10 @@ const trayService = () => {
         const win = global.$windows
         win.show()
     })
+}
+const taryCheckUpdates = () => {
+    const win = global.$windows
+    win.show()
+    updateHandle({ trayCheck: true })
 }
 export default trayService

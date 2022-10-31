@@ -8,7 +8,9 @@ const printEmr = (req, res) => {
     const fontWeight =
         'font-weight: bold;text-shadow:0.15pt 0px 0px black, 0.25pt 0px 0px black, 0.35pt 0px 0px black, -0.25pt 0px 0px black, 0px 0.25pt 0px black, 0px -0.25pt 0px black;'
     // FileStream = FileStream.replace(/\SimSun/g, 'FangSong')
+    const fontNormal = 'font-weight: normal;text-shadow: 0 0 black;'
     FileStream = FileStream.replaceAll('font-weight: bold;', fontWeight)
+    FileStream = FileStream.replaceAll('font-weight: normal;', fontNormal)
     let emrConfig = {
         ...req.body,
         FileStream

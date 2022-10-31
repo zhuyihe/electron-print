@@ -22,7 +22,8 @@ function emptyDir(path) {
         }
     })
 }
-export function updateHandle(feedUrl = 'https://10.102.11.54/GlPrinter/') {
+export function updateHandle({ feedUrl = 'https://10.102.11.54/GlPrinter/', trayCheck = false } = {}) {
+    console.log(feedUrl, trayCheck)
     autoUpdater.autoDownload = false
     autoUpdater.setFeedURL(feedUrl)
     // 当更新发生错误的时候触发。
@@ -43,7 +44,7 @@ export function updateHandle(feedUrl = 'https://10.102.11.54/GlPrinter/') {
         const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
         global.logs.info(`检查可用更新${updatePendingPath}`)
         emptyDir(updatePendingPath)
-        sendUpdateMessage(1)
+        sendUpdateMessage(1, event.releaseNotes)
     })
     // 没有可更新数据时
     autoUpdater.on('update-not-available', (event, arg) => {
@@ -59,6 +60,12 @@ export function updateHandle(feedUrl = 'https://10.102.11.54/GlPrinter/') {
         global.logs.info('下载完成')
         sendUpdateMessage(4)
     })
+    if (trayCheck) {
+        global.logs.info('trayCheck执行更新检查')
+        autoUpdater.checkForUpdates().catch(err => {
+            console.log('网络连接问题', err)
+        })
+    }
     // 执行更新检查
     ipcMain.on('check-update', () => {
         global.logs.info('执行更新检查')
@@ -80,6 +87,7 @@ export function updateHandle(feedUrl = 'https://10.102.11.54/GlPrinter/') {
 }
 
 function sendUpdateMessage(type, data) {
+    console.log(type, data, 'wdq')
     const senddata = {
         state: type,
         msg: data || ''
