@@ -43,8 +43,8 @@ export function updateHandle({ feedUrl = 'https://10.102.11.54/GlPrinter/', tray
         let updaterCacheDirName = 'glprinter-updater'
         const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
         global.logs.info(`检查可用更新${updatePendingPath}`)
-        emptyDir(updatePendingPath)
         sendUpdateMessage(1, event.releaseNotes)
+        emptyDir(updatePendingPath)
     })
     // 没有可更新数据时
     autoUpdater.on('update-not-available', (event, arg) => {
