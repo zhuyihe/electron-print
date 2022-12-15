@@ -50,6 +50,9 @@
 
 <script>
 // import checkIoStutas from '@/mixins/checkIoStutas'
+// const  = require('node-native-printer')
+// import printer from 'node-native-printer'
+
 import { ipcRenderer } from 'electron'
 
 export default {
@@ -103,6 +106,7 @@ export default {
             this.linstenerPrinter()
             this.togoPrint()
             this.linstenerUpdate()
+            // console.log(printer.defaultPrinterName(), 'printer')
         },
         update() {
             ipcRenderer.send('check-update')

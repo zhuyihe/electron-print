@@ -76,7 +76,20 @@ const printPdf = (req, res, next) => {
         })
     }
 }
+const getPrinters = async (req, res, next) => {
+    const printers = await global.$windows.webContents.getPrintersAsync()
+    console.log(printers, 'printers')
+    res.status(200).json({
+        code: 200,
+        data: {
+            success: true,
+            message: '打印机获取成功',
+            data: printers
+        }
+    })
+}
 module.exports = {
     getEmrContent,
-    printPdf
+    printPdf,
+    getPrinters
 }

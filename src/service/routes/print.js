@@ -13,4 +13,5 @@ const vaildator = {
 
 router.post('/emrContent', vaildator.emrContent, printModels.getEmrContent)
 router.post('/printPdf', vaildator.printPdf, printModels.printPdf)
+router.get('/getPrinters', printModels.getPrinters)
 module.exports = router

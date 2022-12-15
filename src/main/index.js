@@ -6,6 +6,7 @@ import modules from './modules'
 import setDefaultProtocol from './modules/protocol/reg'
 import watchProtocol from './modules/protocol/watch'
 let windowServe = windowService()
+
 /**
  * @description 启动App
  * @author zyh

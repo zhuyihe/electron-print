@@ -5,7 +5,6 @@ import router from './router'
 import './plugins/element.js'
 import inject from './plugins/inject.js'
 import '@/assets/iconfont/iconfont.js'
-
 // import VueSocketio from 'vue-socket.io'
 // import socketio from 'socket.io-client'
 Vue.config.productionTip = false
