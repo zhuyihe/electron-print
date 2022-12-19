@@ -64,8 +64,8 @@ export default {
                 type: 'disconnect'
             },
             printerStutas: {
-                msg: '打印服务异常请重启电脑',
-                type: false
+                msg: '打印功能准备就绪',
+                type: true
             },
             printList: [],
             isUpdatte: false,
@@ -103,8 +103,8 @@ export default {
     methods: {
         async init() {
             // await this.linstenerIo()
-            this.linstenerPrinter()
-            this.togoPrint()
+            // this.linstenerPrinter()
+            // this.togoPrint()
             this.linstenerUpdate()
             // console.log(printer.defaultPrinterName(), 'printer')
         },
@@ -131,7 +131,7 @@ export default {
                         // ipcRenderer.send('confirm-downloadUpdate')
                         break
                     case 3:
-                        percentage = parseInt(arg.msg.percent)
+                        percentage = Math.floor(arg.msg.percent)
                         _this.loadingText = `拼命下载中${percentage}%,请勿退出！`
                         break
                     case 4:

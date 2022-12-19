@@ -22,7 +22,9 @@ function emptyDir(path) {
         }
     })
 }
-export function updateHandle({ feedUrl = 'https://10.102.11.54/GlPrinter/', trayCheck = false } = {}) {
+// const feedUrl = 'http://127.0.0.1:5500/'
+// 'https://10.102.11.76/printsoftware/'
+export function updateHandle({ feedUrl = 'https://10.102.11.76/printsoftware/', trayCheck = false } = {}) {
     console.log(feedUrl, trayCheck)
     autoUpdater.autoDownload = false
     autoUpdater.setFeedURL(feedUrl)
@@ -44,7 +46,9 @@ export function updateHandle({ feedUrl = 'https://10.102.11.54/GlPrinter/', tray
         const updatePendingPath = path.join(autoUpdater.app.baseCachePath, updaterCacheDirName, 'pending')
         sendUpdateMessage(1, event.releaseNotes)
         global.logs.info(`检查可用更新${updatePendingPath}`)
-        emptyDir(updatePendingPath)
+        if (updatePendingPath) {
+            emptyDir(updatePendingPath)
+        }
     })
     // 没有可更新数据时
     autoUpdater.on('update-not-available', (event, arg) => {

@@ -37,7 +37,7 @@ module.exports = {
                 publish: [
                     {
                         provider: 'generic',
-                        url: 'https://10.102.11.54/GlPrinter'
+                        url: 'https://10.102.11.76/printsoftware'
                     }
                 ],
                 releaseInfo: {

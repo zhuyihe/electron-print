@@ -1,12 +1,13 @@
 import { app, Menu, Tray } from 'electron'
 import { updateHandle } from '../update'
+const version = require('../../../../package.json').version
 let tray = null
 const menus = [
     {
         click() {
             taryCheckUpdates()
         },
-        label: '检测更新'
+        label: `检测更新(当前版本${version})`
     },
     {
         click() {

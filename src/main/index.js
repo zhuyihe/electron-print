@@ -58,7 +58,7 @@ export default function launchApp() {
         } else {
             win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
         }
-        win.webContents.openDevTools()
+        // win.webContents.openDevTools()
     }
     app.on('window-all-closed', e => {
         if (global.forceQuit) {
