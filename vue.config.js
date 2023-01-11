@@ -45,7 +45,7 @@ module.exports = {
                 },
                 compression: 'store',
                 win: {
-                    // asar: false,
+                    asar: false,
                     target: [
                         {
                             target: 'nsis', //利用nsis制作安装程序,打包文件的后缀为exe

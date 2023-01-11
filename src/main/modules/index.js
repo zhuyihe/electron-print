@@ -12,7 +12,9 @@ import windowModule from './windowServics'
 import trayService from './tray'
 import log from './logger'
 import notification from './notification'
-import { updateHandle } from './update'
+import setDefaultProtocol from './protocol/reg'
+// import { updateHandle } from './update'
+import { checkForUpdates } from './partUpdate'
 export default {
     async init(app) {
         log()
@@ -23,6 +25,8 @@ export default {
         trayService()
         events()
         notification()
-        updateHandle()
+        setDefaultProtocol()
+        // updateHandle()
+        checkForUpdates()
     }
 }

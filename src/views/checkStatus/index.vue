@@ -1,5 +1,11 @@
 <template>
-    <div class="connectToweb" v-loading="isUpdatte" :element-loading-text="loadingText" element-loading-spinner="el-icon-loading">
+    <div
+        class="connectToweb"
+        v-loading="isUpdatte || isPartUpdatte"
+        :element-loading-text="loadingText"
+        element-loading-spinner="el-icon-loading"
+    >
+        <!-- 当前版本：{{ version }} -->
         <div class="tip">
             <div>{{ printerStutas.msg }}</div>
             <div>
@@ -11,6 +17,7 @@
                 </svg>
             </div>
         </div>
+        <!-- <el-button type="primay" @click="checkDartUpdate">点击更新</el-button> -->
         <el-dialog
             title="更新提示"
             :visible.sync="dialogVisible"
@@ -29,20 +36,32 @@
                     </div>
                 </el-scrollbar>
             </div>
-            <!-- <div v-else>
-                <el-progress
-                    type="line"
-                    :percentage="percent"
-                    :text-inside="true"
-                    :stroke-width="25"
-                    :show-text="true"
-                    :color="colors"
-                ></el-progress>
-                <p>程序正在下载，请勿退出...</p>
-            </div> -->
             <span slot="footer" class="dialog-footer" v-if="!isUpdatte">
                 <el-button @click="dialogVisible = false">稍后</el-button>
                 <el-button type="primary" @click="confirmUpdate">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog
+            title="更新提示"
+            :visible.sync="dartdialogVisible"
+            width="500px"
+            :show-close="false"
+            :close-on-click-modal="false"
+            custom-class="updateDialog"
+        >
+            <div v-if="!isPartUpdatte">
+                <span style="font-weight: bold" class="spanicon"><i class="el-icon-warning warning"></i>检测到新版本，是否更新？</span>
+                <el-scrollbar style="height: 100%">
+                    <div class="releaseNotes" v-if="releaseNotes.length">
+                        <div v-for="(item, key) in releaseNotes" :key="key" class="releaseNotesItem">
+                            <span v-if="item">{{ key + 1 }}、{{ item }}</span>
+                        </div>
+                    </div>
+                </el-scrollbar>
+            </div>
+            <span slot="footer" class="dialog-footer" v-if="!isPartUpdatte">
+                <el-button @click="dartdialogVisible = false">稍后</el-button>
+                <el-button type="primary" @click="confirmpartUpdate">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -52,7 +71,7 @@
 // import checkIoStutas from '@/mixins/checkIoStutas'
 // const  = require('node-native-printer')
 // import printer from 'node-native-printer'
-
+const remote = require('@electron/remote')
 import { ipcRenderer } from 'electron'
 
 export default {
@@ -79,7 +98,10 @@ export default {
                 { color: '#1989fa', percentage: 80 },
                 { color: '#5cb87a', percentage: 100 }
             ],
-            releaseNotes: []
+            releaseNotes: [],
+            dartdialogVisible: false,
+            isPartUpdatte: false,
+            version: ''
             // tip: '请与客户端链接'
         }
     },
@@ -95,18 +117,57 @@ export default {
     },
     // mixins: [checkIoStutas],
     created() {
-        this.update()
+        // this.update()
+
+        this.init()
     },
     mounted() {
-        this.init()
+        this.version = remote.app.getVersion()
+        //增量更新
+        // this.checkDartUpdate()
+        console.log(remote.app.getVersion(), 'aaa')
+        // this.init()
     },
     methods: {
         async init() {
             // await this.linstenerIo()
             // this.linstenerPrinter()
             // this.togoPrint()
-            this.linstenerUpdate()
+            //全量更新
+            // this.linstenerUpdate()
             // console.log(printer.defaultPrinterName(), 'printer')
+            this.linstenerDartUpdate()
+        },
+        linstenerDartUpdate() {
+            ipcRenderer.on('UpdatePartMsg', (event, arg) => {
+                console.log(arg, 'arg')
+                let { flag, releaseNotes, updateVersion } = arg
+                if (flag) {
+                    console.log(flag, releaseNotes, updateVersion)
+                    // this.isUpdatte = true
+                    this.dartdialogVisible = true
+                    this.releaseNotes = releaseNotes.split('\r\n')
+                }
+            })
+        },
+        //增量更新
+        checkDartUpdate() {
+            let { flag, releaseNotes, updateVersion } = ipcRenderer.sendSync('exist_update')
+            console.log({ flag, releaseNotes, updateVersion }, 'checkDartUpdate')
+            if (flag) {
+                // this.isUpdatte = true
+                this.dartdialogVisible = true
+                this.releaseNotes = releaseNotes.split('\r\n')
+            }
+        },
+        confirmpartUpdate() {
+            this.isPartUpdatte = true
+            this.dartdialogVisible = false
+            this.loadingText = '正在安装更新，请稍等...'
+            ipcRenderer.send('Sure')
+            // ipcRenderer.invoke('new_update').then(res => {
+            //     ipcRenderer.send('Sure')
+            // })
         },
         update() {
             ipcRenderer.send('check-update')

@@ -1,5 +1,5 @@
 const { Notification } = require('electron')
-
+const path = require('path')
 const notification = () => {
     return {
         notice: null,
@@ -10,10 +10,12 @@ const notification = () => {
                 this.close()
             }
             if (isSupported) {
+                // console.log(path.join(__dirname, './logo.png'), 'aaaa')
                 const options = {
                     title,
                     body,
-                    silent: true
+                    silent: true,
+                    icon: path.join(__dirname, './logo.png')
                 }
                 notice = new Notification(options)
             }

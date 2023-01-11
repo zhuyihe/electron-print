@@ -3,7 +3,6 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 //  窗体管理
 import windowService from './modules/windowServics'
 import modules from './modules'
-import setDefaultProtocol from './modules/protocol/reg'
 import watchProtocol from './modules/protocol/watch'
 let windowServe = windowService()
 
@@ -58,7 +57,7 @@ export default function launchApp() {
         } else {
             win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
         }
-        // win.webContents.openDevTools()
+        if (!global.isDevMode) win.webContents.openDevTools()
     }
     app.on('window-all-closed', e => {
         if (global.forceQuit) {
@@ -97,9 +96,9 @@ export default function launchApp() {
         //     const url = request.url.substr(8)
         //     callback(decodeURI(url))
         // })
-        createWindow()
+        await createWindow()
         modules.init(app)
-        setDefaultProtocol()
+
         // console.log(global, 'wqdqwdqw')
     })
     // modules.init(app);

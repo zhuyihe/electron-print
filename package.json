@@ -1,6 +1,6 @@
 {
     "name": "GlPrinter",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -12,6 +12,7 @@
     "main": "background.js",
     "dependencies": {
         "@electron/remote": "^2.0.8",
+        "adm-zip": "^0.5.9",
         "core-js": "^3.6.5",
         "cors": "^2.8.5",
         "electron-log": "^4.4.8",
@@ -19,12 +20,14 @@
         "element-ui": "^2.4.5",
         "express": "^4.18.1",
         "express-validator": "^6.14.2",
+        "js-yaml": "^4.1.0",
         "loadsh": "^0.0.4",
         "node-sass": "^4.14.1",
         "sass-loader": "^7.3.1",
         "uuid": "^8.3.2",
         "vue": "^2.6.11",
-        "vue-router": "^3.2.0"
+        "vue-router": "^3.2.0",
+        "yamljs": "^0.3.0"
     },
     "devDependencies": {
         "@vue/cli-plugin-eslint": "~4.5.17",

@@ -1,6 +1,6 @@
 import { app, Menu, Tray } from 'electron'
-import { updateHandle } from '../update'
-const version = require('../../../../package.json').version
+import { checkForUpdates } from '../partUpdate'
+const version = app.getVersion()
 let tray = null
 const menus = [
     {
@@ -8,6 +8,14 @@ const menus = [
             taryCheckUpdates()
         },
         label: `检测更新(当前版本${version})`
+    },
+    {
+        click() {
+            global.forceQuit = true
+            app.exit()
+            app.relaunch()
+        },
+        label: '重启'
     },
     {
         click() {
@@ -28,8 +36,6 @@ const trayService = () => {
     })
 }
 const taryCheckUpdates = () => {
-    const win = global.$windows
-    win.show()
-    updateHandle({ trayCheck: true })
+    checkForUpdates('taryCheckUpdates')
 }
 export default trayService
