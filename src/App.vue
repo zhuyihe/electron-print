@@ -21,7 +21,9 @@ export default {
             // tableData: []
         }
     },
-    mounted() {},
+    mounted() {
+    
+    },
     methods: {
         // handlePrintDialogCancel() {
         //     this.dialogVisible = false

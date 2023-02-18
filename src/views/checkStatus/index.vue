@@ -71,8 +71,8 @@
 // import checkIoStutas from '@/mixins/checkIoStutas'
 // const  = require('node-native-printer')
 // import printer from 'node-native-printer'
-const remote = require('@electron/remote')
-import { ipcRenderer } from 'electron'
+const remote = require('@electron/remote');
+import { ipcRenderer } from 'electron';
 
 export default {
     name: 'connectToweb',
@@ -103,15 +103,15 @@ export default {
             isPartUpdatte: false,
             version: ''
             // tip: '请与客户端链接'
-        }
+        };
     },
     computed: {
         customStatus() {
-            console.log(this.percent)
+            console.log(this.percent);
             if (this.percent == 100) {
-                return 'success'
+                return 'success';
             } else {
-                return 'exception'
+                return 'exception';
             }
         }
     },
@@ -119,13 +119,13 @@ export default {
     created() {
         // this.update()
 
-        this.init()
+        this.init();
     },
     mounted() {
-        this.version = remote.app.getVersion()
+        this.version = remote.app.getVersion();
         //增量更新
         // this.checkDartUpdate()
-        console.log(remote.app.getVersion(), 'aaa')
+        console.log(remote.app.getVersion(), 'aaa');
         // this.init()
     },
     methods: {
@@ -136,70 +136,70 @@ export default {
             //全量更新
             // this.linstenerUpdate()
             // console.log(printer.defaultPrinterName(), 'printer')
-            this.linstenerDartUpdate()
+            this.linstenerDartUpdate();
         },
         linstenerDartUpdate() {
             ipcRenderer.on('UpdatePartMsg', (event, arg) => {
-                console.log(arg, 'arg')
-                let { flag, releaseNotes, updateVersion } = arg
+                console.log(arg, 'arg');
+                let { flag, releaseNotes, updateVersion } = arg;
                 if (flag) {
-                    console.log(flag, releaseNotes, updateVersion)
+                    console.log(flag, releaseNotes, updateVersion);
                     // this.isUpdatte = true
-                    this.dartdialogVisible = true
-                    this.releaseNotes = releaseNotes.split('\r\n')
+                    this.dartdialogVisible = true;
+                    this.releaseNotes = releaseNotes.split('\r\n');
                 }
-            })
+            });
         },
         //增量更新
         checkDartUpdate() {
-            let { flag, releaseNotes, updateVersion } = ipcRenderer.sendSync('exist_update')
-            console.log({ flag, releaseNotes, updateVersion }, 'checkDartUpdate')
+            let { flag, releaseNotes, updateVersion } = ipcRenderer.sendSync('exist_update');
+            console.log({ flag, releaseNotes, updateVersion }, 'checkDartUpdate');
             if (flag) {
                 // this.isUpdatte = true
-                this.dartdialogVisible = true
-                this.releaseNotes = releaseNotes.split('\r\n')
+                this.dartdialogVisible = true;
+                this.releaseNotes = releaseNotes.split('\r\n');
             }
         },
         confirmpartUpdate() {
-            this.isPartUpdatte = true
-            this.dartdialogVisible = false
-            this.loadingText = '正在安装更新，请稍等...'
-            ipcRenderer.send('Sure')
+            this.isPartUpdatte = true;
+            this.dartdialogVisible = false;
+            this.loadingText = '正在安装更新，请稍等...';
+            ipcRenderer.send('Sure');
             // ipcRenderer.invoke('new_update').then(res => {
             //     ipcRenderer.send('Sure')
             // })
         },
         update() {
-            ipcRenderer.send('check-update')
+            ipcRenderer.send('check-update');
         },
         confirmUpdate() {
-            this.isUpdatte = true
-            this.dialogVisible = false
-            ipcRenderer.send('confirm-downloadUpdate')
+            this.isUpdatte = true;
+            this.dialogVisible = false;
+            ipcRenderer.send('confirm-downloadUpdate');
         },
         linstenerUpdate() {
-            let _this = this
+            let _this = this;
             //接收主进程版本更新消息
             ipcRenderer.on('UpdateMsg', (event, arg) => {
-                console.log(arg, 'arg')
+                console.log(arg, 'arg');
 
-                let percentage = 0
+                let percentage = 0;
                 switch (arg.state) {
                     case 1:
-                        _this.releaseNotes = arg.msg ? arg.msg.split('\r\n') : []
-                        _this.dialogVisible = true
-                        _this.$windows.show()
+                        _this.releaseNotes = arg.msg ? arg.msg.split('\r\n') : [];
+                        _this.dialogVisible = true;
+                        _this.$windows.show();
                         // ipcRenderer.send('confirm-downloadUpdate')
-                        break
+                        break;
                     case 3:
-                        percentage = Math.floor(arg.msg.percent)
-                        _this.loadingText = `拼命下载中${percentage}%,请勿退出！`
-                        break
+                        percentage = Math.floor(arg.msg.percent);
+                        _this.loadingText = `拼命下载中${percentage}%,请勿退出！`;
+                        break;
                     case 4:
-                        _this.progressStaus = 'success'
-                        _this.loadingText = '下载完成,开始安装...'
-                        ipcRenderer.send('confirm-update')
-                        break
+                        _this.progressStaus = 'success';
+                        _this.loadingText = '下载完成,开始安装...';
+                        ipcRenderer.send('confirm-update');
+                        break;
                 }
                 // for (var i = 0; i < arg.length; i++) {
                 // console.log(arg)
@@ -225,7 +225,7 @@ export default {
                 //     _this.$message('更新失败')
                 // }
                 // }
-            })
+            });
         },
         // linstenerIo() {
         //     ipcRenderer.send('checkIoStutas')
@@ -235,52 +235,52 @@ export default {
         //     })
         // },
         linstenerPrinter() {
-            this.getPrintListHandle()
+            this.getPrintListHandle();
         },
         // 获取打印机列表
         getPrintListHandle() {
             // // 改用ipc异步方式获取列表，解决打印列数量多的时候导致卡死的问题
             // ipcRenderer.send('getPrinterList')
             // ipcRenderer.once('getPrinterList', (event, data) => {
-            const data = this.$electronStore.get('printerList')
+            const data = this.$electronStore.get('printerList');
             // 过滤可用打印机
-            this.printList = data.filter(element => element.status === 0)
-            console.log(this.printList, 'this.printList')
+            this.printList = data.filter(element => element.status === 0);
+            console.log(this.printList, 'this.printList');
             // 1.判断是否有打印服务
             if (this.printList.length <= 0) {
                 this.printerStutas = {
                     msg: '打印服务异常,请尝试重启电脑',
                     type: false
-                }
+                };
             } else {
                 this.printerStutas = {
                     msg: '打印功能准备就绪',
                     type: true
-                }
+                };
                 // console.log(data, 'ccc')
                 // this.checkPrinter()
-                this.$electronStore.set('printList', this.printList)
+                this.$electronStore.set('printList', this.printList);
             }
             // })
         },
         async togoPrint() {
             this.$ipcRenderers.printHtml.get('on', (event, data) => {
-                if (data) this.checkStatus()
-            })
+                if (data) this.checkStatus();
+            });
             this.$ipcRenderers.printPdf.get('on', (event, data) => {
-                console.log(data, 'qqq')
-                if (data) this.checkStatus(data)
-            })
+                console.log(data, 'qqq');
+                if (data) this.checkStatus(data);
+            });
         },
 
         checkStatus(data) {
             if (this.printerStutas.type) {
-                this.$windows.show()
-                console.log(this.$windows, data, ' this.$window')
+                this.$windows.show();
+                console.log(this.$windows, data, ' this.$window');
                 if (!data) {
-                    this.$router.push('printEmr')
+                    this.$router.push('printEmr');
                 } else {
-                    this.$router.push('printPdf')
+                    this.$router.push('printPdf');
                     // console.log(data.url, 'data.url')
                     // window.open(data.url)
                     // this.$windows.loadURL(data.url)
@@ -288,7 +288,7 @@ export default {
             }
         }
     }
-}
+};
 </script>
 
 <style lang="scss">
