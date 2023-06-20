@@ -35,7 +35,7 @@ export default function launchApp() {
      */
     function createWindow() {
         win = windowServe.createMainWin()
-
+       
         win.on('close', e => {
             //  未指定强制退出，都一律隐藏
             if (!global.forceQuit) {
@@ -51,6 +51,7 @@ export default function launchApp() {
                 win.setAlwaysOnTop(false)
             }, 100)
         })
+        console.log(process.env.WEBPACK_DEV_SERVER_URL, 'process.env.WEBPACK_DEV_SERVER_URL')
         if (!process.env.WEBPACK_DEV_SERVER_URL) {
             createProtocol('app')
             win.loadURL('app://./index.html')
@@ -70,6 +71,7 @@ export default function launchApp() {
     //     win.hide()
     // })
     //限制最大窗口数量 单例模式
+    // eslint-disable-next-line no-unused-vars
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         const mainWindow = windowServe.mainWindow
         if (mainWindow) {
