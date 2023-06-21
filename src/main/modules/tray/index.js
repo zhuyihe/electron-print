@@ -27,6 +27,7 @@ const menus = [
 ]
 const trayService = () => {
     tray = new Tray(global.appTrayPath)
+    console.log(menus,'menus')
     const contextMenu = Menu.buildFromTemplate(menus)
     tray.setContextMenu(contextMenu)
     tray.setToolTip('GlPrinter')
