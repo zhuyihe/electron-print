@@ -1,15 +1,15 @@
 {
   "name": "GlPrinter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build --mode atmeng",
-    "electron:serve": "vue-cli-service electron:serve --mode atmeng",
-    "electron:buildCP": "vue-cli-service electron:build --mode cping",
-    "electron:serveCP": "vue-cli-service electron:serve --mode cping"
+    "electron:build": "cross-env VUE_APP_ENV=atmeng vue-cli-service electron:build",
+    "electron:serve": "cross-env VUE_APP_ENV=atmeng vue-cli-service electron:serve",
+    "electron:build-cp": "cross-env VUE_APP_ENV=cp vue-cli-service electron:build ",
+    "electron:serve-cp": "cross-env VUE_APP_ENV=cp vue-cli-service electron:serve"
   },
   "main": "background.js",
   "dependencies": {

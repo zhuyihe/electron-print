@@ -5,25 +5,29 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
 const baseUrl = path.resolve("./") + "/";
-// const configEnv = process
+const configEnv = require("./config.js");
 // 加载默认的 .env 文件
 const downLoadZip = `${baseUrl}resources.zip`;
-
-// global.logs.info(`当前环境:${process.env.ENV}`)
-const curEnv = process.env;
-// global.logs.info(`环境配置文件:${configEnv}`)
-// global.logs.info(`当前环境:${process.env.ENV}`)
-// const fileUrl = 'http://127.0.0.vscode-file://vscode-app/d:/Microsoft%20VS%20Code%20Insiders/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html1:5500/'
-// const fileDefualtUrl = "https://10.102.11.76/printsoftware/";
-console.log(curEnv.VUE_APP_UPDATE_URL, "fileUrl");
-let fileUrl = curEnv.VUE_APP_UPDATE_URL;
-
+const curEnv = configEnv[process.env.VUE_APP_ENV];
+const fileUrl = curEnv.VUE_APP_UPDATE_URL;
 const fileUrlObj = {
   hostname: curEnv.VUE_APP_HOST_NAME,
   port: 443,
   path: curEnv.VUE_APP_PATH_NAME,
   method: "GET",
 };
+setTimeout(() => {
+  global.logs.info(`当前参数${JSON.stringify(curEnv)}`);
+}, 3000);
+// global.logs.info(`当前环境:${process.env.VUE_APP_ENV}`)
+// const curEnv = process.env;
+// global.logs.info(`环境配置文件:${configEnv}`)
+// global.logs.info(`当前环境:${process.env.ENV}`)
+// const fileUrl = 'http://127.0.0.vscode-file://vscode-app/d:/Microsoft%20VS%20Code%20Insiders/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html1:5500/'
+// const fileDefualtUrl = "https://10.102.11.76/printsoftware/";
+// console.log(curEnv.VUE_APP_UPDATE_URL, "fileUrl");
+// let fileUrl = curEnv.VUE_APP_UPDATE_URL;
+
 import { app, ipcMain } from "electron";
 
 /**
@@ -79,7 +83,7 @@ const checkForUpdates = (type) => {
       rejectUnauthorized: false,
       ...fileUrlObj,
     };
-    console.log(options,'options')
+    console.log(options, "options");
     const req = https.request(options, function (res) {
       const data = [];
       res.on("data", function (d) {
