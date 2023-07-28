@@ -1,3 +1,4 @@
+import { app, ipcMain } from "electron";
 const admZip = require("adm-zip");
 const request = require("request");
 const https = require("https");
@@ -5,11 +6,20 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
 const baseUrl = path.resolve("./") + "/";
-const configEnv = require("./config.js");
+const isBuild = process.env.NODE_ENV === "production";
+const defualtEnv = require("./config");
+const pathToDbFile = path.join(
+  isBuild ? __dirname : __static,
+  "../update.json"
+);
+console.log(pathToDbFile, "pathToDbFile");
+const  isExists=fs.existsSync(pathToDbFile)
+console.log(isExists,'isExists')
 // 加载默认的 .env 文件
 const downLoadZip = `${baseUrl}resources.zip`;
-const curEnv = configEnv[process.env.VUE_APP_ENV];
+const curEnv =isExists?  JSON.parse(fs.readFileSync(pathToDbFile, { encoding: "utf-8" })):defualtEnv;
 const fileUrl = curEnv.VUE_APP_UPDATE_URL;
+console.log(curEnv, fileUrl, "curEnv");
 const fileUrlObj = {
   hostname: curEnv.VUE_APP_HOST_NAME,
   port: 443,
@@ -19,16 +29,6 @@ const fileUrlObj = {
 setTimeout(() => {
   global.logs.info(`当前参数${JSON.stringify(curEnv)}`);
 }, 3000);
-// global.logs.info(`当前环境:${process.env.VUE_APP_ENV}`)
-// const curEnv = process.env;
-// global.logs.info(`环境配置文件:${configEnv}`)
-// global.logs.info(`当前环境:${process.env.ENV}`)
-// const fileUrl = 'http://127.0.0.vscode-file://vscode-app/d:/Microsoft%20VS%20Code%20Insiders/resources/app/out/vs/code/electron-sandbox/workbench/workbench.html1:5500/'
-// const fileDefualtUrl = "https://10.102.11.76/printsoftware/";
-// console.log(curEnv.VUE_APP_UPDATE_URL, "fileUrl");
-// let fileUrl = curEnv.VUE_APP_UPDATE_URL;
-
-import { app, ipcMain } from "electron";
 
 /**
  * 更新
@@ -84,6 +84,7 @@ const checkForUpdates = (type) => {
       ...fileUrlObj,
     };
     console.log(options, "options");
+    global.logs.info(`下载更新地址${JSON.stringify(options)}`);
     const req = https.request(options, function (res) {
       const data = [];
       res.on("data", function (d) {
