@@ -6,29 +6,32 @@ const fs = require("fs");
 const yaml = require("js-yaml");
 const path = require("path");
 const baseUrl = path.resolve("./") + "/";
-const isBuild = process.env.NODE_ENV === "production";
-const defualtEnv = require("./config");
-const pathToDbFile = path.join(
-  isBuild ? __dirname : __static,
-  "../update.json"
-);
-console.log(pathToDbFile, "pathToDbFile");
-const  isExists=fs.existsSync(pathToDbFile)
-console.log(isExists,'isExists')
 // 加载默认的 .env 文件
 const downLoadZip = `${baseUrl}resources.zip`;
-const curEnv =isExists?  JSON.parse(fs.readFileSync(pathToDbFile, { encoding: "utf-8" })):defualtEnv;
-const fileUrl = curEnv.VUE_APP_UPDATE_URL;
-console.log(curEnv, fileUrl, "curEnv");
-const fileUrlObj = {
-  hostname: curEnv.VUE_APP_HOST_NAME,
-  port: 443,
-  path: curEnv.VUE_APP_PATH_NAME,
-  method: "GET",
+const getUpadteJson = () => {
+  const isBuild = process.env.NODE_ENV === "production";
+  const defualtEnv = require("./config");
+  const pathToDbFile = path.join(
+    isBuild ? __dirname : __static,
+    "../update.json"
+  );
+  const isExists = fs.existsSync(pathToDbFile);
+
+  const curEnv = isExists
+    ? JSON.parse(fs.readFileSync(pathToDbFile, { encoding: "utf-8" }))
+    : defualtEnv;
+  const fileUrl = curEnv.VUE_APP_UPDATE_URL;
+  const fileUrlObj = {
+    hostname: curEnv.VUE_APP_HOST_NAME,
+    port: 443,
+    path: curEnv.VUE_APP_PATH_NAME,
+    method: "GET",
+  };
+  setTimeout(() => {
+    global.logs.info(`当前参数${JSON.stringify(curEnv)}`);
+  }, 3000);
+  return { fileUrlObj, curEnv };
 };
-setTimeout(() => {
-  global.logs.info(`当前参数${JSON.stringify(curEnv)}`);
-}, 3000);
 
 /**
  * 更新
@@ -78,6 +81,7 @@ const emptyDir = (path, type) => {
   }
 };
 const checkForUpdates = (type) => {
+  const { fileUrlObj } = getUpadteJson();
   return new Promise((resolve, reject) => {
     const options = {
       rejectUnauthorized: false,
