@@ -10,7 +10,7 @@ const WindowService = () => {
         //     global.windowService = this
         //     global.viewWins = this.viewWins
         // },
-        createBrowserWindow({ option, url }) {
+        createBrowserWindow({ option, url }) { 
             const win = new BrowserWindow(option)
             // win.loadURL(winURL)
             win.setIcon(global.appLogoPath)

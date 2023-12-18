@@ -37,6 +37,7 @@ export default function launchApp() {
         win = windowServe.createMainWin()
        
         win.on('close', e => {
+            console.log(e,'eeeee')
             //  未指定强制退出，都一律隐藏
             if (!global.forceQuit) {
                 e.preventDefault()

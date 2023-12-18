@@ -11,6 +11,8 @@ const printEmr = (req, res) => {
     const fontNormal = 'font-weight: normal;text-shadow: 0 0 black;'
     FileStream = FileStream.replaceAll('font-weight: bold;', fontWeight)
     FileStream = FileStream.replaceAll('font-weight: normal;', fontNormal)
+    FileStream = FileStream.replaceAll('<b>', `<b style="${fontWeight}">`)
+    // console.log(FileStream,'FileStream')
     let emrConfig = {
         ...req.body,
         FileStream
@@ -90,8 +92,8 @@ const printSilent = (win, emrConfig, res, id) => {
             }
             printerConfig.msg = msg
             global.logs.info(`print ${data}==>${JSON.stringify(printerConfig)}`)
-            global.$notification.create('打印消息', msg)
-            if (global.isDevMode) global.$windowService.closeWindow(id)
+            global.$notification.create('打印消息', msg) 
+            // if (global.isDevMode) global.$windowService.closeWindow(id)
         })
     })
 }
