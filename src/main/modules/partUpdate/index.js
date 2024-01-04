@@ -20,7 +20,8 @@ const getUpadteJson = () => {
   const curEnv = isExists
     ? JSON.parse(fs.readFileSync(pathToDbFile, { encoding: "utf-8" }))
     : defualtEnv;
-  const fileUrl = curEnv.VUE_APP_UPDATE_URL;
+    console.log(curEnv,'curEnv')
+  // const fileUrl = curEnv.VUE_APP_UPDATE_URL;
   const fileUrlObj = {
     hostname: curEnv.VUE_APP_HOST_NAME,
     port: 443,
@@ -36,11 +37,11 @@ const getUpadteJson = () => {
 /**
  * 更新
  */
-const downLoad = (updateMsg) => {
+const downLoad = (updateMsg,curEnv) => {
   return new Promise((resolve, reject) => {
     // 创建一个可以写入的流，
     const stream = fs.createWriteStream(downLoadZip);
-    const url = `${fileUrl}resources.zip`;
+    const url = `${curEnv.VUE_APP_UPDATE_URL}resources.zip`;
     const req = request({
       url,
       rejectUnauthorized: false,
@@ -81,7 +82,7 @@ const emptyDir = (path, type) => {
   }
 };
 const checkForUpdates = (type) => {
-  const { fileUrlObj } = getUpadteJson();
+  const { fileUrlObj ,curEnv} = getUpadteJson();
   return new Promise((resolve, reject) => {
     const options = {
       rejectUnauthorized: false,
@@ -100,16 +101,17 @@ const checkForUpdates = (type) => {
         var doc = yaml.load(body);
         const json = JSON.parse(JSON.stringify(doc, null, 2));
         const { version, releaseNotes } = json;
+
         console.log(version, releaseNotes, "releaseNotes");
+        
         if (version) {
           /**
            * app.getVersion() 返回开发中的 Electron 版本号
            */
-          const localVersion = app.getVersion();
-          let flag = false;
-          flag = version !== localVersion ? true : false;
-          if (flag) {
-            const updateMsg = { flag, releaseNotes, updateVersion: version };
+          const packageVersion = app.getVersion();
+          console.log(compareVersions(version,packageVersion),version,packageVersion)
+          if (compareVersions(version,packageVersion)>0) {
+            const updateMsg = { releaseNotes, updateVersion: version };
             //判断是否存在resources.zip
             fs.stat(downLoadZip, async (err, stats) => {
               console.log(err, stats, "err");
@@ -123,7 +125,7 @@ const checkForUpdates = (type) => {
                   "更新包正在下载中,请稍等..."
                 );
                 global.logs.info(`更新包正在下载中,请稍等...`);
-                await downLoad(updateMsg);
+                await downLoad(updateMsg,curEnv);
               }
             });
           } else {
@@ -168,4 +170,30 @@ function sendUpdateMessage(type, data, winshow) {
   win.show();
   global.$windows.webContents.send(type, data);
 }
+
+function compareVersions(version1, version2) {
+  // 将版本号字符串拆分成数组
+  const arr1 = version1.split('.');
+  const arr2 = version2.split('.');
+  
+  // 比较每个部分的大小
+  for (let i = 0; i < Math.max(arr1.length, arr2.length); i++) {
+    if (arr1[i] === undefined) {
+      return -1;
+    }
+    if (arr2[i] === undefined) {
+      return 1;
+    }
+    
+    if (parseInt(arr1[i]) > parseInt(arr2[i])) {
+      return 1;
+    } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
+      return -1;
+    }
+  }
+  
+  // 如果所有部分都相等，则版本号相等
+  return 0;
+}
+
 export { downLoad, checkForUpdates };
