@@ -8,13 +8,15 @@ const path = require("path");
 const baseUrl = path.resolve("./") + "/";
 // 加载默认的 .env 文件
 const downLoadZip = `${baseUrl}resources.zip`;
+const axios = require('axios').default;
 const getUpadteJson = () => {
   const isBuild = process.env.NODE_ENV === "production";
   const defualtEnv = require("./config");
   const pathToDbFile = path.join(
     isBuild ? __dirname : __static,
-    "../update.json"
+    "../public/update.json"
   );
+  console.log(pathToDbFile,'pathToDbFile')
   const isExists = fs.existsSync(pathToDbFile);
 
   const curEnv = isExists
@@ -116,10 +118,14 @@ const checkForUpdates = (type) => {
             fs.stat(downLoadZip, async (err, stats) => {
               console.log(err, stats, "err");
               if (stats) {
-                global.logs.info(`存在更新包，直接下载`);
+                global.logs.info(`存在更新包，直接更新`);
                 global.logs.info(JSON.stringify(stats));
                 sendUpdateMessage("UpdatePartMsg", updateMsg);
               } else {
+                // const url = `${curEnv.VUE_APP_UPDATE_URL}resources.zip`;
+              //   checkIfFileExists(url)
+              //  console.log(' checkFileExists(url)')
+                // const isExists = fs.existsSync(pathToDbFile);
                 global.$notification.create(
                   "消息提示",
                   "更新包正在下载中,请稍等..."
@@ -195,5 +201,33 @@ function compareVersions(version1, version2) {
   // 如果所有部分都相等，则版本号相等
   return 0;
 }
+async function checkIfFileExists(url) {
+  // console.log(axios,'axios')
+  try {
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+    let result=await axios.get(url, { httpsAgent: agent })
+   console.log(result.status=='200','qqqq')
+  } catch (error) {
+   console.log(error,'error')
+  }
+ 
+  // 发送 GET 请求
+  
+    // .then(response => {
+    //   // 如果响应状态码为 200，表示文件存在
+    //   if (response.status === 200) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // })
+    // .catch(error => {
+    //   console.error('发生错误:', error);
+    //   return false;
+    // });
+}
+
 
 export { downLoad, checkForUpdates };

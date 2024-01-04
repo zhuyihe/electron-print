@@ -1,6 +1,6 @@
 {
   "name": "GlPrinter",
-  "version": "1.0.5",
+  "version": "1.0.3",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,6 +15,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "adm-zip": "^0.5.9",
+    "axios": "^1.6.4",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
