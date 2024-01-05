@@ -118,14 +118,15 @@ export default {
     // mixins: [checkIoStutas],
     created() {
         // this.update()
-
         this.init();
+        
     },
     mounted() {
         this.version = remote.app.getVersion();
         //增量更新
         // this.checkDartUpdate()
         console.log(remote.app.getVersion(),ipcRenderer, 'aaa');
+       
         // this.init()
     },
     methods: {
@@ -139,6 +140,7 @@ export default {
             this.linstenerDartUpdate();
         },
         linstenerDartUpdate() {
+            
             console.log( ipcRenderer.on,' ipcRenderer.on')
             ipcRenderer.on('UpdatePartMsg', (event, arg) => {
                 console.log(arg, 'arg');

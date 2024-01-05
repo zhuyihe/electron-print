@@ -124,9 +124,13 @@ const checkForUpdates = (type) => {
             fs.stat(downLoadZip, async (err, stats) => {
               console.log(err, stats, "err");
               if (stats) {
-                global.logs.info(`存在更新包，直接更新`);
-                global.logs.info(JSON.stringify(stats));
-                sendUpdateMessage("UpdatePartMsg", updateMsg);
+                global.$windows.webContents.on('did-finish-load', () => {
+                  console.log('webContents加载完了')
+                  global.logs.info(`存在更新包，直接更新`);
+                  global.logs.info(JSON.stringify(stats));
+                  sendUpdateMessage("UpdatePartMsg", updateMsg);
+                })
+               
               } else {
                 checkIfFileExists(updateMsg, curEnv);
                 // global.$notification.create("消息提示", "更新包正在下载中,请稍等...");
@@ -175,7 +179,7 @@ function sendUpdateMessage(type, data, winshow) {
   const win = global.$windows;
   win.show();
   console.log(global.$windows.webContents.send,type)
-  global.$windows.webContents.send(type, data);
+  win.webContents.send(type, data);
   
 }
 

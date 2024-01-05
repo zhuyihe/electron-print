@@ -5,7 +5,7 @@
     </div>
 </template>
 <script>
-import { ipcRenderer } from 'electron'
+// import { ipcRenderer } from 'electron'
 import path from 'path'
 import printDialog from './PrintDialog.vue'
 export default {

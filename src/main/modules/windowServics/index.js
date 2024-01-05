@@ -23,10 +23,9 @@ const WindowService = () => {
 
             require('@electron/remote/main').enable(mainWindow.webContents)
             require('@electron/remote/main').initialize()
-            global.$windows = mainWindow
-            mainWindow.webContents.openDevTools(true)
+            // mainWindow.webContents.openDevTools(true)
             if (global.isDevMode) {
-                mainWindow.webContents.openDevTools()
+                mainWindow.webContents.openDevTools(true)
             }
             this.mainWindow = mainWindow
             this.mainWindow.setIcon(global.appLogoPath)
@@ -44,7 +43,7 @@ const WindowService = () => {
             this.winItems[winId] = data
         },
         deleteWindow(winId) {
-            delete this.winItems[winId]
+            delete this.winItems[winId] 
         },
         createWinItem(winId, option, url) {
             const win = this.createBrowserWindow({ option, url })
