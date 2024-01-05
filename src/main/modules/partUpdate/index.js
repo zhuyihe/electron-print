@@ -8,21 +8,21 @@ const path = require("path");
 const baseUrl = path.resolve("./") + "/";
 // 加载默认的 .env 文件
 const downLoadZip = `${baseUrl}resources.zip`;
-const axios = require('axios').default;
 const getUpadteJson = () => {
   const isBuild = process.env.NODE_ENV === "production";
   const defualtEnv = require("./config");
   const pathToDbFile = path.join(
     isBuild ? __dirname : __static,
-    "../public/update.json"
+    isBuild ? '../public/' : '../public/',
+    "update.json"
   );
-  console.log(pathToDbFile,'pathToDbFile')
+  console.log(pathToDbFile, "pathToDbFile");
   const isExists = fs.existsSync(pathToDbFile);
 
   const curEnv = isExists
     ? JSON.parse(fs.readFileSync(pathToDbFile, { encoding: "utf-8" }))
     : defualtEnv;
-    console.log(curEnv,'curEnv')
+  console.log(curEnv, "curEnv");
   // const fileUrl = curEnv.VUE_APP_UPDATE_URL;
   const fileUrlObj = {
     hostname: curEnv.VUE_APP_HOST_NAME,
@@ -39,11 +39,11 @@ const getUpadteJson = () => {
 /**
  * 更新
  */
-const downLoad = (updateMsg,curEnv) => {
+const downLoad = (updateMsg, curEnv) => {
   return new Promise((resolve, reject) => {
     // 创建一个可以写入的流，
     const stream = fs.createWriteStream(downLoadZip);
-    const url = `${curEnv.VUE_APP_UPDATE_URL}resources.zip`;
+    const url = `https://${curEnv.VUE_APP_HOST_NAME}/${curEnv.VUE_APP_UPDATE_PATH_NAME}`;
     const req = request({
       url,
       rejectUnauthorized: false,
@@ -52,6 +52,7 @@ const downLoad = (updateMsg,curEnv) => {
       console.log("finish");
     });
     req.on("close", function () {
+      console.log('close')
       sendUpdateMessage("UpdatePartMsg", updateMsg);
       resolve(true);
     });
@@ -84,7 +85,7 @@ const emptyDir = (path, type) => {
   }
 };
 const checkForUpdates = (type) => {
-  const { fileUrlObj ,curEnv} = getUpadteJson();
+  const { fileUrlObj, curEnv } = getUpadteJson();
   return new Promise((resolve, reject) => {
     const options = {
       rejectUnauthorized: false,
@@ -105,15 +106,20 @@ const checkForUpdates = (type) => {
         const { version, releaseNotes } = json;
 
         console.log(version, releaseNotes, "releaseNotes");
-        
+
         if (version) {
           /**
            * app.getVersion() 返回开发中的 Electron 版本号
            */
           const packageVersion = app.getVersion();
-          console.log(compareVersions(version,packageVersion),version,packageVersion)
-          if (compareVersions(version,packageVersion)>0) {
-            const updateMsg = { releaseNotes, updateVersion: version };
+          console.log(
+            compareVersions(version, packageVersion),
+            version,
+            packageVersion
+          );
+          const flag=compareVersions(version, packageVersion) > 0?true:false
+          if (flag) {
+            const updateMsg = { flag,releaseNotes, updateVersion: version };
             //判断是否存在resources.zip
             fs.stat(downLoadZip, async (err, stats) => {
               console.log(err, stats, "err");
@@ -122,16 +128,10 @@ const checkForUpdates = (type) => {
                 global.logs.info(JSON.stringify(stats));
                 sendUpdateMessage("UpdatePartMsg", updateMsg);
               } else {
-                // const url = `${curEnv.VUE_APP_UPDATE_URL}resources.zip`;
-              //   checkIfFileExists(url)
-              //  console.log(' checkFileExists(url)')
-                // const isExists = fs.existsSync(pathToDbFile);
-                global.$notification.create(
-                  "消息提示",
-                  "更新包正在下载中,请稍等..."
-                );
-                global.logs.info(`更新包正在下载中,请稍等...`);
-                await downLoad(updateMsg,curEnv);
+                checkIfFileExists(updateMsg, curEnv);
+                // global.$notification.create("消息提示", "更新包正在下载中,请稍等...");
+                // global.logs.info(`更新包正在下载中,请稍等...`);
+                // await downLoad(updateMsg, curEnv);
               }
             });
           } else {
@@ -174,14 +174,16 @@ const checkForUpdates = (type) => {
 function sendUpdateMessage(type, data, winshow) {
   const win = global.$windows;
   win.show();
+  console.log(global.$windows.webContents.send,type)
   global.$windows.webContents.send(type, data);
+  
 }
 
 function compareVersions(version1, version2) {
   // 将版本号字符串拆分成数组
-  const arr1 = version1.split('.');
-  const arr2 = version2.split('.');
-  
+  const arr1 = version1.split(".");
+  const arr2 = version2.split(".");
+
   // 比较每个部分的大小
   for (let i = 0; i < Math.max(arr1.length, arr2.length); i++) {
     if (arr1[i] === undefined) {
@@ -190,44 +192,40 @@ function compareVersions(version1, version2) {
     if (arr2[i] === undefined) {
       return 1;
     }
-    
+
     if (parseInt(arr1[i]) > parseInt(arr2[i])) {
       return 1;
     } else if (parseInt(arr1[i]) < parseInt(arr2[i])) {
       return -1;
     }
   }
-  
+
   // 如果所有部分都相等，则版本号相等
   return 0;
 }
-async function checkIfFileExists(url) {
-  // console.log(axios,'axios')
-  try {
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
+async function checkIfFileExists(updateMsg) {
+  const { curEnv } = getUpadteJson();
+  const options = {
+    rejectUnauthorized: false,
+    hostname: curEnv.VUE_APP_HOST_NAME,
+    port: 443,
+    path: curEnv.VUE_APP_UPDATE_PATH_NAME,
+    method: "GET",
+  };
+  const req = https.request(options, async function (res) {
+    console.log(res, res.statusCode, "res");
+    if (res.statusCode == '200') {
+      global.$notification.create("消息提示", "更新包正在下载中,请稍等...");
+      global.logs.info(`更新包正在下载中,请稍等...`);
+      await downLoad(updateMsg, curEnv);
+    }else{
+      global.$notification.create("消息提示", "更新地址配置有误，请检查！");
+    }
+    res.on("error", (err) => {
+      console.log("qqqqqq", err);
     });
-    let result=await axios.get(url, { httpsAgent: agent })
-   console.log(result.status=='200','qqqq')
-  } catch (error) {
-   console.log(error,'error')
-  }
- 
-  // 发送 GET 请求
-  
-    // .then(response => {
-    //   // 如果响应状态码为 200，表示文件存在
-    //   if (response.status === 200) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // })
-    // .catch(error => {
-    //   console.error('发生错误:', error);
-    //   return false;
-    // });
+  });
+  req.end();
 }
-
 
 export { downLoad, checkForUpdates };

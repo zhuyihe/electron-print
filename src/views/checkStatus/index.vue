@@ -125,7 +125,7 @@ export default {
         this.version = remote.app.getVersion();
         //增量更新
         // this.checkDartUpdate()
-        console.log(remote.app.getVersion(), 'aaa');
+        console.log(remote.app.getVersion(),ipcRenderer, 'aaa');
         // this.init()
     },
     methods: {

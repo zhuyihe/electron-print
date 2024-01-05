@@ -24,6 +24,7 @@ const WindowService = () => {
             require('@electron/remote/main').enable(mainWindow.webContents)
             require('@electron/remote/main').initialize()
             global.$windows = mainWindow
+            mainWindow.webContents.openDevTools(true)
             if (global.isDevMode) {
                 mainWindow.webContents.openDevTools()
             }

@@ -56,7 +56,7 @@ module.exports = {
               ],
             },
           ],
-          extraResources: ["./public/*.exe", "./public/pdf/*.pdf","./public/pdf/update.json"],
+          extraResources: ["./public/*.exe", "./public/pdf/*.pdf","./public/update.json"],
           //win相关配置
           icon: "./public/logo.png", //图标，当前图标在根目录下，注意这里有两个坑
         },
