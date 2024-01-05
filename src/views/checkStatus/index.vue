@@ -139,6 +139,7 @@ export default {
             this.linstenerDartUpdate();
         },
         linstenerDartUpdate() {
+            console.log( ipcRenderer.on,' ipcRenderer.on')
             ipcRenderer.on('UpdatePartMsg', (event, arg) => {
                 console.log(arg, 'arg');
                 let { flag, releaseNotes, updateVersion } = arg;
