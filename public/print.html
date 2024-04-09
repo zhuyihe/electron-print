@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="printData">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,22 +19,49 @@
     </style>
   </head>
 
-  <body id="bd"></body>
+  <body id="bd" style="font-family:SimSun;"></body>
 
   <script>
     const { ipcRenderer } = require("electron");
     ipcRenderer.on("webview-print-render", (event, info) => {
       // 执行渲染
       console.log(info, "ccc");
+      // document.getElementById('bd').innerHTML=info.content
       // console.log(event, info)
-      document.write(info.content);
-      if (info.parent == "win") {
-        ipcRenderer.send("webview-print-do");
-      } else {
-        //webview
-        ipcRenderer.sendToHost("webview-print-do");
-      }
+      replaceHTML(info.content, () => {
+        if (info.parent == "win") {
+          ipcRenderer.send("webview-print-do");
+        } else {
+          //webview
+          ipcRenderer.sendToHost("webview-print-do");
+        }
+      });
+      // document.write(info.content);
+      // if (info.parent == "win") {
+      //   ipcRenderer.send("webview-print-do");
+      // } else {
+      //   //webview
+      //   ipcRenderer.sendToHost("webview-print-do");
+      // }
     });
+    function replaceHTML(htmlString, callback) {
+      // 创建一个临时div元素来容纳HTML字符串
+      var virtualElement = document.createElement("html");
+      virtualElement.innerHTML = htmlString;
+      
+      // 获取head标签内容
+      var headContent = virtualElement.querySelector('head').innerHTML;
+
+      // 获取body标签内容
+      var bodyContent = virtualElement.querySelector('body').innerHTML;
+      document.head.innerHTML=headContent
+      document.body.innerHTML=bodyContent
+      virtualElement.remove()
+      // 调用回调函数
+      if (typeof callback === "function") {
+        callback();
+      }
+    }
     ipcRenderer.on("htmlPrint", (event, message) => {
       //接收响应
       // document.querySelector('#container').innerHTML = content

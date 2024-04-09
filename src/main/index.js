@@ -103,6 +103,12 @@ export default function launchApp() {
 
         // console.log(global, 'wqdqwdqw')
     })
+    process.on('uncaughtException', (error) => {
+        // 在这里处理异常
+        console.error('Uncaught Exception:', error);
+        // 这里可以进行进一步的处理，比如关闭应用程序
+        // app.quit();
+    });
     // modules.init(app);
     if (global.isDevMode) {
         if (global.isWindows) {

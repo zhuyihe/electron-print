@@ -93,8 +93,9 @@ const printSilent = (win, emrConfig, res, id) => {
             printerConfig.msg = msg
             global.logs.info(`print ${data}==>${JSON.stringify(printerConfig)}`)
             global.$notification.create('打印消息', msg) 
+            console.log(data,global.isDevMode, '打印结果')
             if (global.isDevMode) global.$windowService.closeWindow(id)
         })
-    })
+    }) 
 }
 module.exports = printEmr
