@@ -37,46 +37,11 @@ const printPdf = (req, res, next) => {
   const err = validationResult(req);
   if (!err.isEmpty()) {
     const { msg } = err.errors[0];
+    resStatus(res, false, msg);
     // 抛出错误，交给我们自定义的统一异常处理程序进行错误返回
     // next(boom.badRequest(msg))
   } else {
-    let { type, url, deviceName } = req.body;
-    console.log(global.$windows);
-    // global.$electronStore.set('pdf', {
-    //     type,
-    //     url
-    // })
-    // global.$windows.webContents.send('printPdf', {
-    //     type,
-    //     url
-    // })
-    let pdfPath = path.join(
-      __static,
-      "pdf/" + url.slice(url.lastIndexOf("/") + 1)
-    );
-    executePrint(pdfPath, deviceName);
-    // printer(pdfPath)
-    //     .then(res => {
-    //         console.log(res)
-    //     })
-    //     .catch(err => {
-    //         console.log(res)
-    //     })
-    // console.log(pdfPath, 'pdfPath')
-    // request(url, err => {
-    //     console.log(err, 'err')
-    //     if (!err) {
-
-    //     }
-    // }).pipe(fs.createWriteStream(pdfPath))
-    res.status(200).json({
-      code: 200,
-      data: {
-        success: true,
-        message: "操作成功",
-        // win: global.electronStore.get('win')
-      },
-    });
+    executePrint( req, res);
   }
 };
 const getPrinters = async (req, res, next) => {
@@ -90,8 +55,19 @@ const getPrinters = async (req, res, next) => {
     },
   });
 };
+
+const getPrinterStatred = (req, res, next) => {
+  res.status(200).json({
+    code: 200,
+    data: {
+      success: true,
+      message: "Glprinter启动状态获取成功",
+    },
+  });
+};
 module.exports = {
   getEmrContent,
   printPdf,
   getPrinters,
+  getPrinterStatred
 };

@@ -10,8 +10,8 @@ const vaildator = {
     ],
     printPdf: [body('url').notEmpty().withMessage('pdf地址不能为空')]
 }
-
+router.post('/isGlprinterStarted', printModels.getPrinterStatred)
 router.post('/emrContent', vaildator.emrContent, printModels.getEmrContent)
-router.post('/printPdf', vaildator.printPdf, printModels.printPdf)
+router.post('/printPdf', vaildator.emrContent, printModels.printPdf)
 router.get('/getPrinters', printModels.getPrinters)
 module.exports = router
